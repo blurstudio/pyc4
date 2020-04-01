@@ -474,7 +474,9 @@ def parseArguments():
         help='Generate C4 IDs for the provided files or folders.')
     return parser.parse_args()
 
-if __name__ == '__main__':
+def main():
+    """ Handle parsing of cli interface
+    """
     args = parseArguments()
     show_path = args.recursive or len(args.files) > 1
 
@@ -532,3 +534,6 @@ if __name__ == '__main__':
     if args.max_threads > 1:
         c4.start()
         c4.join()
+
+if __name__ == '__main__':
+    main()
