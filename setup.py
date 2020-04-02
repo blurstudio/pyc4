@@ -31,5 +31,10 @@ setup(
     keywords='c4',
     py_modules=["pyc4"],
     author='Blur Studio',
-    author_email='github@blur.com'
+    author_email='github@blur.com',
+        entry_points={
+        'console_scripts': [
+            'pyc4 = pyc4:main',
+        ],
+    },
 )

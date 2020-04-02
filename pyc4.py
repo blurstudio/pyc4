@@ -12,7 +12,7 @@ import threading
 from argparse import ArgumentParser
 import codecs
 
-__version__ = '0.2'
+__version__ = '0.3'
 __version_c4__ = '0.7.0'
 
 class HashIncomplete(Exception):
@@ -236,6 +236,10 @@ class C4(object):
             HashIncomplete: If self.__stopped__() returns True. Used to stop
                 the calculation early.
         """
+
+        if not os.path.exists(path):
+            return C4id('File missing', path=path, bytes=0)
+
         #Calculate SHA512 Hash
         hash_sha512, bytes = self.calculate_hash_512(path)
         b58_hash = self.b58encode(hash_sha512)
@@ -406,6 +410,10 @@ class C4Queue(C4):
                 c4id = c4.from_file(filename)
             except HashIncomplete: # pragma: no cover "Not testable"
                 break
+            except Exception as error:
+                # Report any unexpected errors
+                c4id = C4id(error, path=filename, bytes=0)
+
             self.hashes[filename] = c4id
             self.queue.task_done()
             # If requested, report that c4id finished processing.
@@ -474,7 +482,9 @@ def parseArguments():
         help='Generate C4 IDs for the provided files or folders.')
     return parser.parse_args()
 
-if __name__ == '__main__':
+def main():
+    """ Handle parsing of cli interface
+    """
     args = parseArguments()
     show_path = args.recursive or len(args.files) > 1
 
@@ -532,3 +542,6 @@ if __name__ == '__main__':
     if args.max_threads > 1:
         c4.start()
         c4.join()
+
+if __name__ == '__main__':
+    main()
